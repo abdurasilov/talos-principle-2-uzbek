@@ -1,0 +1,9 @@
+/extract/
+/extract_cfg/
+/stage/
+/work/
+/batches/
+/tools/
+/out/
+/dist/
+node_modules/

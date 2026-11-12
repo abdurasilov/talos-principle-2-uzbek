@@ -1,0 +1,14 @@
+The Talos Principle 2 — oʻzbekcha tarjima
+
+Oʻrnatish:
+1. Arxivni papkaga chiqaring (oʻng tugma → Extract All).
+2. install.bat ni ikki marta bosing. U oʻyinni Steam papkalaridan oʻzi topadi.
+3. Oʻyinda Options → Gameplay → Language boʻlimidan «uz» ni tanlang.
+
+Oʻchirish: uninstall.bat ni ikki marta bosing.
+
+Qoʻlda oʻrnatish: pakchunk99-Windows_UzbekLocalization_P.pak faylini <oʻyin papkasi>\Talos2\Content\Paks\ ichiga nusxalang.
+
+Windows «Windows protected your PC» oynasini chiqarsa: «More info» → «Run anyway».
+
+Xato tarjima yoki muammo topsangiz, GitHub sahifasidagi Issues boʻlimiga yozing.
