@@ -1,0 +1,22 @@
+name: Build
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - tr/**
+      - scripts/**
+      - installer/**
+      - base.enc
+      - .github/actions/**
+      - .github/workflows/build.yml
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ./.github/actions/build
+        with:
+          base-key: ${{ secrets.BASE_KEY }}

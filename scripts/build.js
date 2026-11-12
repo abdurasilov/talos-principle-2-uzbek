@@ -5,7 +5,7 @@ const { readEntries, stringify } = require('./csv.js');
 
 const root = path.resolve(__dirname, '..');
 const tools = path.join(root, 'tools');
-const locDir = path.join(root, 'extract/Talos2/Content/Localization');
+const locDir = path.join(root, 'base');
 const stage = path.join(root, 'stage');
 const out = path.join(root, 'out');
 const cultureArg = process.argv.find(a => a.startsWith('--culture='));
@@ -77,7 +77,10 @@ fs.rmSync(stage, { recursive: true, force: true });
 fs.mkdirSync(out, { recursive: true });
 
 for (const group of ['Game', 'DLC']) {
-  const entries = readEntries(path.join(root, `work/${group}_en.csv`));
+  const sourceCsv = path.join(root, `work/${group}_en.csv`);
+  fs.mkdirSync(path.dirname(sourceCsv), { recursive: true });
+  execFileSync(path.join(tools, 'UnrealLocres.exe'), ['export', path.join(locDir, `${group}/en/${group}.locres`), '-f', 'csv', '-o', sourceCsv], { stdio: 'pipe' });
+  const entries = readEntries(sourceCsv);
   const byKey = new Map(entries.map(e => [e.key, e]));
   const tr = loadTranslations(group);
   let applied = 0;

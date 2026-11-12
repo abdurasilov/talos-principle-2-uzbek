@@ -1,0 +1,34 @@
+name: Build pak
+description: Download tools, decrypt base files and build the localization pak
+
+inputs:
+  base-key:
+    required: true
+
+runs:
+  using: composite
+  steps:
+    - uses: actions/setup-node@v4
+      with:
+        node-version: 22
+
+    - name: Download tools
+      shell: pwsh
+      run: |
+        New-Item -ItemType Directory -Force tools | Out-Null
+        Invoke-WebRequest https://github.com/trumank/repak/releases/download/v0.2.3/repak_cli-x86_64-pc-windows-msvc.zip -OutFile repak.zip
+        if ((Get-FileHash repak.zip).Hash -ne '6720d602144d75df477a99d5bedb6ea780997546afc335901d4937cafeaa73fa') { throw 'repak hash mismatch' }
+        Expand-Archive repak.zip -DestinationPath repak
+        Copy-Item (Get-ChildItem repak -Recurse -Filter repak.exe | Select-Object -First 1).FullName tools/
+        Invoke-WebRequest https://github.com/akintos/UnrealLocres/releases/download/1.1.0/UnrealLocres.exe -OutFile tools/UnrealLocres.exe
+        if ((Get-FileHash tools/UnrealLocres.exe).Hash -ne 'b961927f92a8bca928d378a8430e5ea36fed300500b228b184b8d6b61ebb22a1') { throw 'UnrealLocres hash mismatch' }
+
+    - name: Decrypt base files
+      shell: pwsh
+      env:
+        BASE_KEY: ${{ inputs.base-key }}
+      run: node scripts/base.js unpack
+
+    - name: Build
+      shell: pwsh
+      run: node scripts/build.js
