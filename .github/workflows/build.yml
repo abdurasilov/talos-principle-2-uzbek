@@ -10,13 +10,38 @@ on:
       - base.enc
       - .github/actions/**
       - .github/workflows/build.yml
+      - .github/release-notes.md
   workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: release
+  cancel-in-progress: false
 
 jobs:
   build:
     runs-on: windows-latest
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
       - uses: ./.github/actions/build
         with:
           base-key: ${{ secrets.BASE_KEY }}
+
+      - name: Determine version
+        id: version
+        run: node scripts/next-version.js
+
+      - name: Publish release
+        if: steps.version.outputs.version != ''
+        shell: pwsh
+        env:
+          GH_TOKEN: ${{ github.token }}
+          VERSION: ${{ steps.version.outputs.version }}
+        run: |
+          node scripts/package.js $env:VERSION
+          gh release create $env:VERSION "dist/Talos2-Uzbek-$env:VERSION.zip" --target $env:GITHUB_SHA --title "Talos2-Uzbek-$env:VERSION" --notes-file dist/release-notes.md
